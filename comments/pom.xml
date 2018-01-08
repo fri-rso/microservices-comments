@@ -71,7 +71,11 @@
             <artifactId>kumuluzee-config-etcd</artifactId>
             <version>LATEST</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.kumuluz.ee.discovery</groupId>
+            <artifactId>kumuluzee-discovery-etcd</artifactId>
+            <version>LATEST</version>
+        </dependency>
     </dependencies>
 
     <build>
