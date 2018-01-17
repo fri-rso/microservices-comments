@@ -2,6 +2,7 @@ package com.kumuluz.ee.samples.microservices.simple;
 
 import com.kumuluz.ee.logs.LogManager;
 import com.kumuluz.ee.logs.Logger;
+import com.kumuluz.ee.logs.cdi.Log;
 import com.kumuluz.ee.samples.microservices.simple.models.Comments;
 import org.eclipse.microprofile.metrics.Histogram;
 import org.eclipse.microprofile.metrics.annotation.Metered;
@@ -24,10 +25,10 @@ import java.util.List;
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-
+@Log
 public class CommentsResource {
 
-    private static final Logger LOG = LogManager.getLogger(CommentsResource.class.getName());
+    //private static final Logger LOG = LogManager.getLogger(CommentsResource.class.getName());
 
     @PersistenceContext
     private EntityManager em;
@@ -42,12 +43,12 @@ public class CommentsResource {
     @GET
     @Metered(name = "getComments_meter")
     public Response getComments() {
-        LOG.trace("getComments ENTRY");
+        //LOG.trace("getComments ENTRY");
         TypedQuery<Comments> query = em.createNamedQuery("Comments.findAll", Comments.class);
 
         List<Comments> comments = query.getResultList();
         histogram.update(comments.size());
-        LOG.info("Stevilo prikazanih komentarjev: {}", comments.size());
+        //LOG.info("Stevilo prikazanih komentarjev: {}", comments.size());
         return Response.ok(comments).build();
     }
 
@@ -59,14 +60,14 @@ public class CommentsResource {
     @Path("/{id}")
     @Timed(name = "getComment_timer")
     public Response getComment(@PathParam("id") Integer id) {
-        LOG.trace("getComment ENTRY");
+        //LOG.trace("getComment ENTRY");
         Comments p = em.find(Comments.class, id);
 
         if (p == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
 
         }
-        LOG.info("Uspesno prikazan komentart ID: {}", p.getId());
+        //LOG.info("Uspesno prikazan komentart ID: {}", p.getId());
         return Response.ok(p).build();
     }
 
@@ -76,7 +77,7 @@ public class CommentsResource {
     @POST
     @Path("/{id}")
     public Response editComment(@PathParam("id") Integer id, Comments comments) {
-        LOG.trace("editComment ENTRY");
+        //LOG.trace("editComment ENTRY");
         Comments p = em.find(Comments.class, id);
 
         if (p == null)
@@ -92,7 +93,7 @@ public class CommentsResource {
         em.persist(p);
 
         em.getTransaction().commit();
-        LOG.info("Uspesno urejen komentart ID: {}", p.getId());
+        //LOG.info("Uspesno urejen komentart ID: {}", p.getId());
         return Response.status(Response.Status.CREATED).entity(p).build();
     }
 
@@ -101,7 +102,7 @@ public class CommentsResource {
      */
     @POST
     public Response createComment(Comments p) {
-        LOG.trace("createComment ENTRY");
+        //LOG.trace("createComment ENTRY");
         p.setId(null);
 
         em.getTransaction().begin();
@@ -109,7 +110,7 @@ public class CommentsResource {
         em.persist(p);
 
         em.getTransaction().commit();
-        LOG.info("Uspesno dodan komentart ID: {}", p.getId());
+        //LOG.info("Uspesno dodan komentart ID: {}", p.getId());
         return Response.status(Response.Status.CREATED).entity(p).build();
     }
 
@@ -123,7 +124,7 @@ public class CommentsResource {
     @GET
     @Path("/config")
     public Response test() {
-        LOG.trace("config ENTRY");
+        //LOG.trace("config ENTRY");
         String response =
                 "{" +
                         "\"jndi-name\": \"%s\"," +
@@ -141,7 +142,7 @@ public class CommentsResource {
                 properties.getPassword(),
                 properties.getMaxPoolSize()
         );
-        LOG.trace("config uspesen EXIT");
+        //LOG.trace("config uspesen EXIT");
         return Response.ok(response).build();
     }
 }
